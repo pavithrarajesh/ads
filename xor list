@@ -1,0 +1,90 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+
+//node structure for XOR list
+struct node{
+    int data;
+    struct node *npx;
+};
+
+struct node *head,*tail;
+
+//function that returns XOR of the previous and next node
+struct node * XOR(struct node *prev,struct node *next){
+    return (struct node *)((uintptr_t)prev^(uintptr_t)next);
+}
+
+//function to add a node
+void create(int value){
+
+    //creating a new node
+    struct node *temp=(struct node *)malloc(sizeof(struct node));
+    temp->data=value;
+    temp->npx=NULL;
+
+    //inserting first node
+    if(head==NULL){
+        head=tail=temp;
+        return;
+    }//insertion of every other node
+    else{
+        tail->npx=XOR(tail->npx,temp);
+        temp->npx=tail;
+        tail=temp;
+        return;
+    }
+}
+
+void display(){
+    struct node *temp;
+    struct node *prev,*current;
+
+    //displaying forward movement
+    printf("\nForward Movement\n");
+    temp=head;
+    prev=NULL;
+    current=NULL;
+    while(temp!=NULL){
+        printf("%d\t",temp->data);
+        current=temp;
+        temp=XOR(prev,temp->npx);
+         prev=current;
+    }
+
+    //displaying backward movement
+    printf("\nBackward Movement\n");
+    temp=tail;
+    prev=NULL;
+    current=NULL;
+    while(temp!=NULL){
+        printf("%d\t",temp->data);
+        current=temp;
+        temp=XOR(prev,temp->npx);
+        prev=current;
+    }
+    printf("\n");
+
+}
+
+int main()
+{
+    int ch, n;
+
+    do{
+        printf("Enter 1 to insert element\n");
+        printf("Enter 2 to display list\n");
+        printf("Enter -1 to exit\n");
+        scanf("%d",&ch);
+        switch(ch){
+            case 1:printf("Enter the value you want to insert\n");
+            scanf("%d",&n);
+            create(n);
+            break;
+            case 2:display();
+            break;
+            case -1:printf("Exit\n");
+            break;
+        }
+    }while(ch!=-1);
+}
